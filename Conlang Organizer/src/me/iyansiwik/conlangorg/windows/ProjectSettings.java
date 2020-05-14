@@ -3,7 +3,10 @@ package me.iyansiwik.conlangorg.windows;
 import java.awt.BorderLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -24,7 +27,11 @@ public class ProjectSettings implements WindowListener {
 		frame.addWindowListener(this);
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
+		try {
+			frame.setIconImage(ImageIO.read(new File("res/logo.png")));
+		} catch (IOException e3) {
+			e3.printStackTrace();
+		}
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
 		frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		

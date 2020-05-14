@@ -6,12 +6,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JInternalFrame;
 
 public class ProjectEditor implements WindowListener {
 
@@ -30,9 +34,14 @@ public class ProjectEditor implements WindowListener {
 
 	private void initialize() {
 		frame = new JFrame(projectName + " - " + projectPath);
-		frame.setBounds(100, 100, 1280, 720);
+		frame.setBounds(100, 100, 720, 480);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.addWindowListener(this);
+		try {
+			frame.setIconImage(ImageIO.read(new File("res/logo.png")));
+		} catch (IOException e3) {
+			e3.printStackTrace();
+		}
 		
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
@@ -90,6 +99,15 @@ public class ProjectEditor implements WindowListener {
 		JDesktopPane desktopPane = new JDesktopPane();
 		desktopPane.setBackground(Color.LIGHT_GRAY);
 		frame.getContentPane().add(desktopPane);
+		
+		JInternalFrame internalFrame = new JInternalFrame("New JInternalFrame");
+		internalFrame.setIconifiable(true);
+		internalFrame.setClosable(true);
+		internalFrame.setMaximizable(true);
+		internalFrame.setResizable(true);
+		internalFrame.setBounds(157, 79, 229, 176);
+		desktopPane.add(internalFrame);
+		internalFrame.setVisible(true);
 		
 		frame.setVisible(true);
 	}

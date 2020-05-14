@@ -13,26 +13,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.imageio.ImageIO;
+import javax.swing.AbstractListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import me.iyansiwik.conlangorg.Path;
+import me.iyansiwik.conlangorg.Reference;
 import me.iyansiwik.conlangorg.windows.utilities.MotionTabbedPane;
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
-import javax.swing.AbstractListModel;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
 
 public class Startup {
 
@@ -60,6 +63,11 @@ public class Startup {
 		frame.setBounds(100, 100, 480, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
+		try {
+			frame.setIconImage(ImageIO.read(new File("res/logo.png")));
+		} catch (IOException e3) {
+			e3.printStackTrace();
+		}
 		frame.setUndecorated(true);
 		frame.setLocationRelativeTo(null);
 		frame.getContentPane().setLayout(null);
@@ -92,12 +100,6 @@ public class Startup {
 		tabbedPane.addTab("Welcome", null, panelWelcome, null);
 		panelWelcome.setLayout(null);
 		
-		JLabel lblTitleWelcome = new JLabel("Conlang Organizer");
-		lblTitleWelcome.setFont(new Font("Tahoma", Font.BOLD, 28));
-		lblTitleWelcome.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTitleWelcome.setBounds(69, 11, 337, 70);
-		panelWelcome.add(lblTitleWelcome);
-		
 		JButton btnCloseWelcome = new JButton("Close");
 		btnCloseWelcome.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -112,15 +114,60 @@ public class Startup {
 		btnCloseWelcome.setBounds(376, 238, 89, 23);
 		panelWelcome.add(btnCloseWelcome);
 		
+		JButton btnUpdate = new JButton("Update");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnUpdate.setBounds(10, 238, 89, 23);
+		panelWelcome.add(btnUpdate);
+		
+		boolean updateExists = false; // TODO Look this up instead of arbitrarily deciding this if possible.
+		
+		if(updateExists) {
+			JLabel lblUpdateAvailable = new JLabel("Update Available");
+			lblUpdateAvailable.setForeground(new Color(50, 205, 50));
+			lblUpdateAvailable.setBounds(109, 242, 132, 14);
+			panelWelcome.add(lblUpdateAvailable);
+			
+			btnUpdate.setEnabled(true);
+		} else {
+			JLabel lblNoUpdatesDetected = new JLabel("No Updates Detected");
+			lblNoUpdatesDetected.setForeground(Color.GRAY);
+			lblNoUpdatesDetected.setBounds(109, 242, 118, 14);
+			panelWelcome.add(lblNoUpdatesDetected);
+			
+			btnUpdate.setEnabled(false);
+		}
+		
+		JLabel lblCreatedByIyan = new JLabel("Created by Iyan Siwik");
+		lblCreatedByIyan.setForeground(Color.BLACK);
+		lblCreatedByIyan.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblCreatedByIyan.setBounds(290, 11, 175, 14);
+		panelWelcome.add(lblCreatedByIyan);
+		
+		JLabel lblVersionWelcome = new JLabel("Version "+Reference.getVersion());
+		lblVersionWelcome.setHorizontalAlignment(SwingConstants.LEFT);
+		lblVersionWelcome.setBounds(10, 26, 112, 14);
+		panelWelcome.add(lblVersionWelcome);
+		
+		JLabel lblTitleWelcome = new JLabel(Reference.TITLE);
+		lblTitleWelcome.setHorizontalAlignment(SwingConstants.LEFT);
+		lblTitleWelcome.setForeground(Color.BLACK);
+		lblTitleWelcome.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblTitleWelcome.setBounds(10, 11, 175, 14);
+		panelWelcome.add(lblTitleWelcome);
+		
+		
 		JPanel panelNew = new JPanel();
 		tabbedPane.addTab("New", null, panelNew, null);
 		panelNew.setLayout(null);
 		
-		JLabel lblTitleNew = new JLabel("New Conlang");
-		lblTitleNew.setBounds(69, 11, 337, 70);
-		panelNew.add(lblTitleNew);
-		lblTitleNew.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTitleNew.setFont(new Font("Tahoma", Font.BOLD, 28));
+		JLabel lblNew = new JLabel("New Conlang");
+		lblNew.setBounds(69, 11, 337, 70);
+		panelNew.add(lblNew);
+		lblNew.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNew.setFont(new Font("Tahoma", Font.BOLD, 28));
 		
 		JButton btnCloseNew = new JButton("Close");
 		btnCloseNew.addActionListener(new ActionListener() {
@@ -193,15 +240,33 @@ public class Startup {
 		lblProjectPath.setBounds(132, 143, 104, 14);
 		panelNew.add(lblProjectPath);
 		
+		JLabel label = new JLabel("Created by Iyan Siwik");
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
+		label.setForeground(Color.BLACK);
+		label.setBounds(290, 11, 175, 14);
+		panelNew.add(label);
+		
+		JLabel lblTitleNew = new JLabel(Reference.TITLE);
+		lblTitleNew.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblTitleNew.setHorizontalAlignment(SwingConstants.LEFT);
+		lblTitleNew.setForeground(Color.BLACK);
+		lblTitleNew.setBounds(10, 11, 175, 14);
+		panelNew.add(lblTitleNew);
+		
+		JLabel lblVersionNew = new JLabel("Version "+Reference.getVersion());
+		lblVersionNew.setHorizontalAlignment(SwingConstants.LEFT);
+		lblVersionNew.setBounds(10, 26, 112, 14);
+		panelNew.add(lblVersionNew);
+		
 		JPanel panelOpen = new JPanel();
 		tabbedPane.addTab("Open", null, panelOpen, null);
 		panelOpen.setLayout(null);
 		
-		JLabel lblTitleOpen = new JLabel("Open Conlang");
-		lblTitleOpen.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTitleOpen.setFont(new Font("Tahoma", Font.BOLD, 28));
-		lblTitleOpen.setBounds(69, 11, 337, 70);
-		panelOpen.add(lblTitleOpen);
+		JLabel lblOpen = new JLabel("Open Conlang");
+		lblOpen.setHorizontalAlignment(SwingConstants.CENTER);
+		lblOpen.setFont(new Font("Tahoma", Font.BOLD, 28));
+		lblOpen.setBounds(69, 11, 337, 70);
+		panelOpen.add(lblOpen);
 		
 		JButton btnCloseOpen = new JButton("Close");
 		btnCloseOpen.addActionListener(new ActionListener() {
@@ -218,6 +283,7 @@ public class Startup {
 		panelOpen.add(btnCloseOpen);
 		
 		JList<String> list = new JList<String>();
+		list.setBorder(new LineBorder(new Color(171, 173, 179)));
 		list.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
 				txtOpenPath.setText(list.getSelectedValue());
@@ -267,12 +333,30 @@ public class Startup {
 				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				chooser.setFileFilter(new FileNameExtensionFilter("Conlang Files (.conlang)", "conlang"));
 				if(chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-					txtOpenPath.setText(chooser.getSelectedFile().getParent());
+					txtOpenPath.setText(chooser.getSelectedFile().getPath());
 				}
 			}
 		});
 		btnBrowseOpen.setBounds(275, 214, 67, 22);
 		panelOpen.add(btnBrowseOpen);
+		
+		JLabel lblTitleOpen = new JLabel("Created by Iyan Siwik");
+		lblTitleOpen.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblTitleOpen.setForeground(Color.BLACK);
+		lblTitleOpen.setBounds(290, 11, 175, 14);
+		panelOpen.add(lblTitleOpen);
+		
+		JLabel lblTitel = new JLabel(Reference.TITLE);
+		lblTitel.setHorizontalAlignment(SwingConstants.LEFT);
+		lblTitel.setForeground(Color.BLACK);
+		lblTitel.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblTitel.setBounds(10, 11, 175, 14);
+		panelOpen.add(lblTitel);
+		
+		JLabel lblVersionOpen = new JLabel("Version "+Reference.getVersion());
+		lblVersionOpen.setHorizontalAlignment(SwingConstants.LEFT);
+		lblVersionOpen.setBounds(10, 26, 112, 14);
+		panelOpen.add(lblVersionOpen);
 		
 		frame.setVisible(true);
 	}
