@@ -24,12 +24,15 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import me.iyansiwik.conlangorg.Path;
 import me.iyansiwik.conlangorg.windows.utilities.MotionTabbedPane;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 import javax.swing.AbstractListModel;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 public class Startup {
 
@@ -38,6 +41,7 @@ public class Startup {
 	private Thread thread;
 	private JTextField txtLanguageName;
 	private JTextField txtProjectPath;
+	private JTextField txtOpenPath;
 	
 	public Startup() {
 		thread = new Thread() {
@@ -146,6 +150,7 @@ public class Startup {
 		JButton btnCreate = new JButton("Create");
 		btnCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(txtProjectPath.getText().isEmpty() || txtLanguageName.getText().isEmpty()) return;
 				File dir = new File(txtProjectPath.getText());
 				if(!dir.exists()) dir.mkdir();
 				if(dir.listFiles().length > 0) {
@@ -159,11 +164,6 @@ public class Startup {
 					e1.printStackTrace();
 				}
 				
-				try {
-					appendRecents(10, txtLanguageName.getText() + " | " + txtProjectPath.getText());
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
 				openProject(txtLanguageName.getText(), txtProjectPath.getText());
 			}
 		});
@@ -218,7 +218,12 @@ public class Startup {
 		panelOpen.add(btnCloseOpen);
 		
 		JList<String> list = new JList<String>();
-		list.setVisibleRowCount(10);
+		list.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent arg0) {
+				txtOpenPath.setText(list.getSelectedValue());
+			}
+		});
+		list.setVisibleRowCount(8);
 		try {
 			list.setModel(new AbstractListModel<String>() {
 				private static final long serialVersionUID = 1L;
@@ -234,17 +239,50 @@ public class Startup {
 			e1.printStackTrace();
 		}
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		list.setBounds(117, 87, 240, 129);
+		list.setBounds(132, 82, 210, 129);
 		panelOpen.add(list);
 		
 		JButton btnOpen = new JButton("Open");
+		btnOpen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(txtOpenPath.getText().isEmpty()) return;
+				String[] path = txtOpenPath.getText().split("\\\\");
+				String name = path[path.length-1];
+				name = name.substring(0, name.length()-8); // ".conlang" has 8 chars
+				openProject(name, txtOpenPath.getText().substring(0, txtOpenPath.getText().length()-8-name.length()-1));
+			}
+		});
 		btnOpen.setBounds(10, 238, 89, 23);
 		panelOpen.add(btnOpen);
+		
+		txtOpenPath = new JTextField();
+		txtOpenPath.setBounds(132, 215, 133, 20);
+		panelOpen.add(txtOpenPath);
+		txtOpenPath.setColumns(10);
+		
+		JButton btnBrowseOpen = new JButton("Browse");
+		btnBrowseOpen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser chooser = new JFileChooser();
+				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				chooser.setFileFilter(new FileNameExtensionFilter("Conlang Files (.conlang)", "conlang"));
+				if(chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+					txtOpenPath.setText(chooser.getSelectedFile().getParent());
+				}
+			}
+		});
+		btnBrowseOpen.setBounds(275, 214, 67, 22);
+		panelOpen.add(btnBrowseOpen);
 		
 		frame.setVisible(true);
 	}
 	
 	private void openProject(String projectName, String projectPath) {
+		try {
+			appendRecents(8, projectPath+"\\"+projectName+".conlang");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		frame.dispose();
 		new ProjectEditor(projectName, projectPath, thread);
 	}

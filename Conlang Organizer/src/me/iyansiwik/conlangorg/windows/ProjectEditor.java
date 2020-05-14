@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -11,7 +13,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-public class ProjectEditor {
+public class ProjectEditor implements WindowListener {
 
 	private Thread thread;
 	private String projectName;
@@ -27,9 +29,10 @@ public class ProjectEditor {
 	}
 
 	private void initialize() {
-		frame = new JFrame();
+		frame = new JFrame(projectName + " - " + projectPath);
 		frame.setBounds(100, 100, 1280, 720);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.addWindowListener(this);
 		
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
@@ -55,6 +58,11 @@ public class ProjectEditor {
 		mnFile.add(mntmSaveAs);
 		
 		JMenuItem mntmExit = new JMenuItem("Exit");
+		mntmExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+			}
+		});
 		mnFile.add(mntmExit);
 		
 		JMenu mnEdit = new JMenu("Edit");
@@ -85,4 +93,18 @@ public class ProjectEditor {
 		
 		frame.setVisible(true);
 	}
+
+	public void windowActivated(WindowEvent arg0) {}
+	public void windowClosed(WindowEvent arg0) {}
+	public void windowClosing(WindowEvent arg0) {
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	public void windowDeactivated(WindowEvent arg0) {}
+	public void windowDeiconified(WindowEvent arg0) {}
+	public void windowIconified(WindowEvent arg0) {}
+	public void windowOpened(WindowEvent arg0) {}
 }
